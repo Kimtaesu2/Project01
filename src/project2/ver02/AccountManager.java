@@ -16,6 +16,13 @@ public class AccountManager {
 		accountnum = 0;
 	}
 	
+	public void showMenu() {
+		System.out.println("-----Menu------");
+		System.out.println("1.계좌개설  2.입금  3.출금");
+		System.out.println("4.계좌정보출력  5.프로그램종료");
+		System.out.printf("선택:");
+	}
+	
 	public void makeAccount() {
 		
 		Scanner scan = new Scanner(System.in);

@@ -10,13 +10,6 @@ public class BankingSystemVer02 {
 	static final int WITHDRAW=3;
 	static final int INQUIRE=4;
 	static final int EXIT=5;
-	
-	public static void showMenu() {
-		System.out.println("-----Menu------");
-		System.out.println("1.계좌개설  2.입금  3.출금");
-		System.out.println("4.계좌정보출력  5.프로그램종료");
-		System.out.printf("선택:");
-	}
 
 	public static void main(String[] args) {
 		
@@ -25,7 +18,7 @@ public class BankingSystemVer02 {
 		while(true) {
 			
 			//메뉴출력을 위한 메소드호출
-			showMenu();
+			acc.showMenu();
 			Scanner scan = new Scanner(System.in);
 			int choice = scan.nextInt();
 			

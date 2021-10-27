@@ -1,8 +1,8 @@
-package project2.ver03;
+package project2.ver04;
 
 import java.util.InputMismatchException;
 import java.util.Scanner;
-import project2.ver03.Account;
+import project2.ver04.Account;
 
 public class AccountManager {
 	
