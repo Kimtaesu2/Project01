@@ -1,10 +1,12 @@
 package project2.ver04;
 
-public abstract class Account  {
+import java.io.Serializable;
+
+public abstract class Account implements Serializable {
 	
-	private String accountID;//계좌번호
-	private String customName;//고객이름
-	private int accMoney;//잔고
+	String accountID;//계좌번호
+	String customName;//고객이름
+	int accMoney;//잔고
 	
 	//생성자
 	public Account(String accountID, String customName, int accMoney) {

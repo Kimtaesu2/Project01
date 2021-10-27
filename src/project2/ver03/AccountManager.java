@@ -109,21 +109,24 @@ public class AccountManager {
 				if(acID.compareTo(account[i].getAccountID())==0) {
 					
 					if(money>account[i].getAccMoney()) { //예외처리
-						WithdrawException e = new WithdrawException(account, i);
-						throw e;
+						System.out.println("잔고가 부족합니다. 금액전체를 출금할까요? y/n");
+						char select = scan.next().charAt(0);
+						
+						if(select=='y')
+							account[i].setAccMoney(account[i].getAccMoney()-account[i].getAccMoney());
+						else {
+							System.out.println("출금요청 취소");
+							throw new Exception();
+						}
 					}
-					account[i].setAccMoney(account[i].getAccMoney()-money);
+					else
+						account[i].setAccMoney(account[i].getAccMoney()-money);
 				}
 			}
 			System.out.println("출금이 완료되었습니다.");
 		}
-		catch (WithdrawException e) {
-			Scanner scan = new Scanner(System.in);
-			char select = scan.next().charAt(0);
-			
-		}
 		catch (Exception e) {
-			System.out.println("1000원 단위의 금액만 출금하세요.");
+			System.out.println("1000원 단위의 가진 금액만 출금하세요.");
 			e.printStackTrace();
 		}
 	}

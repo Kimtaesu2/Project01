@@ -1,26 +1,33 @@
 package project2.ver04;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.HashSet;
 import java.util.InputMismatchException;
+import java.util.Iterator;
 import java.util.Scanner;
+
 import project2.ver04.Account;
 
 public class AccountManager {
 	
-	public Account[] account;
-	public int accountnum;
+	static int selectsave=0;
+	
+	HashSet<Account> set;
 	
 	//생성자
-	public AccountManager(int num) {
-		//num의 크기의 객체배열 생성
-		account = new Account[num];
-		//최초 실행시 저장된 객체가 없으므로 0으로 초기화
-		accountnum = 0;
+	public AccountManager() {
+		set = new HashSet<Account>();
+		
+		objectInput();
 	}
 	
 	public void showMenu() {
 		System.out.println("-----Menu------");
 		System.out.println("1.계좌개설  2.입금  3.출금");
-		System.out.println("4.계좌정보출력  5.프로그램종료");
+		System.out.println("4.계좌정보출력  5.저장옵션  6.프로그램종료");
 		System.out.printf("선택:");
 	}
 	
@@ -38,16 +45,33 @@ public class AccountManager {
 		type = scan.nextInt(); scan.nextLine();
 		
 		System.out.printf("계좌번호:");acID = scan.nextLine();
+		
+		Iterator itr = set.iterator(); //이터레이터 객체 생성 및 준비
+		while(itr.hasNext()) { //추출할 객체가 있는지 확인 후
+			Account acc = (Account) itr.next(); //추출
+			
+			if(acc.getAccountID().equals(acID)) {
+				System.out.println("중복계좌발견됨 덮어쓸까요?(y or n)");
+				char select = scan.next().charAt(0); scan.nextLine();
+					
+					if(select=='y')
+						System.out.println(set.remove(acc));
+					else
+						return;
+		
+			}
+		}
+		
 		System.out.printf("고객이름:");csName = scan.nextLine();
 		System.out.printf("잔고:");acMoney = scan.nextInt();
 		System.out.println("기본이자%(정수형태로입력):");interest = scan.nextInt(); scan.nextLine();
 		
 		if(type==1)
-			account[accountnum++] = new NormalAccount(acID, csName, acMoney, interest);
+			set.add(new NormalAccount(acID, csName, acMoney, interest));
 		if(type==2) {
 			System.out.println("신용등급(A,B,C등급):");
 			grade = scan.next().charAt(0);
-			account[accountnum++] = new HighCreditAccount(acID, csName, acMoney, interest, grade);
+			set.add(new HighCreditAccount(acID, csName, acMoney, interest, grade));
 		}
 		
 		System.out.println("계좌계설이 완료되었습니다.");
@@ -70,14 +94,14 @@ public class AccountManager {
 				throw new Exception();
 			}
 			
-			for(int i=0; i<accountnum; i++) {
-				if(acID.compareTo(account[i].getAccountID())==0) {
-					
-					account[i].setAccMoney(
-							account[i].getAccMoney()+
-							account[i].acc(account[i].getAccMoney())+money);
-				}
+			Iterator itr = set.iterator(); //이터레이터 객체 생성 및 준비
+			while(itr.hasNext()) { //추출할 객체가 있는지 확인 후
+				Account acc = (Account) itr.next(); //추출
+				
+				if(acc.getAccountID().equals(acID)) 	//계좌번호 확인후 입금
+					acc.setAccMoney(acc.getAccMoney()+money);
 			}
+
 			System.out.println("입금이 완료되었습니다.");
 
 		}
@@ -105,38 +129,113 @@ public class AccountManager {
 				throw new Exception();
 			}
 			
-			for(int i=0; i<accountnum; i++) {
-				if(acID.compareTo(account[i].getAccountID())==0) {
-					
-					if(money>account[i].getAccMoney()) { //예외처리
-						WithdrawException e = new WithdrawException(account, i);
-						throw e;
+			
+			Iterator itr = set.iterator(); //이터레이터 객체 생성 및 준비
+			while(itr.hasNext()) { //추출할 객체가 있는지 확인 후
+				Account acc = (Account) itr.next(); //추출
+				
+				if(acc.getAccountID().equals(acID)) {
+					if(acc.getAccMoney()<money) {
+						System.out.println("잔고가 부족합니다. 금액전체를 출금할까요? y/n");
+						char select = scan.next().charAt(0);
+						
+						if(select=='y')
+							acc.setAccMoney(acc.getAccMoney()-acc.getAccMoney());
+						else {
+							System.out.println("출금요청 취소");
+							throw new Exception();
+						}
 					}
-					account[i].setAccMoney(account[i].getAccMoney()-money);
+					else
+						acc.setAccMoney(acc.getAccMoney()-money);
 				}
 			}
 			System.out.println("출금이 완료되었습니다.");
 		}
-		catch (WithdrawException e) {
-			Scanner scan = new Scanner(System.in);
-			char select = scan.next().charAt(0);
-			
-		}
 		catch (Exception e) {
-			System.out.println("1000원 단위의 금액만 출금하세요.");
+			System.out.println("1000원 단위의 가진 금액만 출금하세요.");
 			e.printStackTrace();
 		}
 	}
 	public void showAccInfo() {
 		
 		System.out.println("\n***계좌정보출력***");
-		for(int i=0; i<accountnum; i++) {
+		Iterator itr = set.iterator();
+		while(itr.hasNext()) {
+			Account acc = (Account) itr.next();
+			
 			System.out.println("---------------");
-			account[i].showAllData();
+			acc.showAllData();
 			System.out.println("---------------");
 		}
 		System.out.println("전체 계좌정보출력이 완료되었습니다.");
 	}
-
+	
+	public void saveOption() {
+		
+		System.out.println("1.자동저장On, 2.자동저장Off");
+		Scanner scan = new Scanner(System.in);
+		int select = scan.nextInt();
+		
+		if(select == 1) {
+			if(select == selectsave) {
+				System.out.println("이미 자동저장이 실행중입니다");
+				return;
+			}
+			
+			
+			
+			
+			
+			
+			selectsave=1;
+			
+			//start()
+		}
+		if(select == 2) {
+			//interrupt()
+			
+			
+			
+			selectsave=2;
+		}
+	}
+	
+	public void objectOutput() {
+		
+		try {
+			//인스턴스를 파일에 저장하기 위해 출력스트림을 생성한다.
+			ObjectOutputStream out = new ObjectOutputStream
+					(new FileOutputStream("src/project2/ver04/AccountInfo.obj"));
+			
+			Iterator itr = set.iterator(); //이터레이터 객체 생성 및 준비
+			while(itr.hasNext()) { //추출할 객체가 있는지 확인 후
+				Account acc = (Account)itr.next(); 
+				out.writeObject(acc);
+			}
+		}
+		catch(Exception e) {
+			System.out.println("예외발생");
+			e.printStackTrace();
+		}
+	}
+	
+	public void objectInput() {
+		try {
+			ObjectInputStream in = 
+					new ObjectInputStream(
+							new FileInputStream("src/project2/ver04/AccountInfo.obj"));
+			
+			while(true) {
+				Account account = (Account)in.readObject();
+				set.add(account);
+				if(account==null) break;
+			}
+		}
+		catch (Exception e) {
+			System.out.println("더 이상 읽을 객체가 없습니다.");
+		}
+		
+	}
 
 }
