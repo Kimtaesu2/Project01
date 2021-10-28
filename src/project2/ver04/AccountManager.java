@@ -171,42 +171,37 @@ public class AccountManager {
 		System.out.println("전체 계좌정보출력이 완료되었습니다.");
 	}
 	
-	public void saveOption() {
+	public void saveOption(AutoSaverT save) {
 		
 		System.out.println("1.자동저장On, 2.자동저장Off");
 		Scanner scan = new Scanner(System.in);
 		int select = scan.nextInt();
 		
+		//자동저장
 		if(select == 1) {
-			if(select == selectsave) {
+			if(!(save.isAlive())) {
+				save.setDaemon(true);
+				save.start();
+			}
+			else {
 				System.out.println("이미 자동저장이 실행중입니다");
 				return;
 			}
-			
-			
-			
-			
-			
-			
-			selectsave=1;
-			
-			//start()
 		}
-		if(select == 2) {
-			//interrupt()
-			
-			
-			
-			selectsave=2;
+		//자동저장끄기
+		else if(select == 2) {
+			System.out.println("자동저장 종료");
+			if(save.isAlive())
+				save.interrupt();
 		}
 	}
 	
-	public void objectOutput() {
+	public void objectOutput(String file) {
 		
 		try {
 			//인스턴스를 파일에 저장하기 위해 출력스트림을 생성한다.
 			ObjectOutputStream out = new ObjectOutputStream
-					(new FileOutputStream("src/project2/ver04/AccountInfo.obj"));
+					(new FileOutputStream(file));
 			
 			Iterator itr = set.iterator(); //이터레이터 객체 생성 및 준비
 			while(itr.hasNext()) { //추출할 객체가 있는지 확인 후

@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 import project2.ver04.AccountManager;
+import project2.ver04.AutoSaverT;
 import project2.ver04.MenuSelectException;
 import java.io.Serializable;
 import java.io.ObjectInputStream;
@@ -22,6 +23,7 @@ public class BankingSystemVer04 {
 	public static void main(String[] args) {
 		
 		AccountManager acc = new AccountManager();
+		AutoSaverT save = new AutoSaverT(acc);
 		
 		while(true) {
 			
@@ -47,10 +49,11 @@ public class BankingSystemVer04 {
 					acc.showAccInfo();
 					break;
 				case SAVEOP://저장옵션
-					acc.saveOption();
+					acc.saveOption(save);
 					break;
 				case EXIT:
-					acc.objectOutput();
+					String file = "src/project2/ver04/AccountInfo.obj";
+					acc.objectOutput(file);
 					System.out.println("프로그램종료");
 					return; //main메서드의 종료이므로 프로그램 자체의 종료로 이어진다.
 				}//switch 끝
