@@ -1,6 +1,7 @@
 package project2.ver04;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 public abstract class Account implements Serializable {
 	
@@ -41,5 +42,28 @@ public abstract class Account implements Serializable {
 	public int acc(int num) {
 		return 1;
 	}
+	
+	//컬렉션 중복처리
+	@Override
+	public int hashCode() {
+		return accountID.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Account other = (Account) obj;
+		return Objects.equals(accountID, other.accountID);
+	}
+	
+	
+	
+	
+	
 	
 }

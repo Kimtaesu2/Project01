@@ -11,11 +11,11 @@ public class HighCreditAccount extends Account {
 		
 		this.interest = interest;
 		this.grade = grade;
-		if(grade=='A')
+		if(grade=='A' || grade=='a')
 			this.grade_num=7;
-		else if (grade=='B')
+		else if (grade=='B' || grade=='b')
 			this.grade_num=4;
-		else
+		else if (grade=='C' || grade=='c')
 			this.grade_num=2;
 		
 	}

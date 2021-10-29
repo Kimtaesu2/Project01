@@ -45,36 +45,42 @@ public class AccountManager {
 		type = scan.nextInt(); scan.nextLine();
 		
 		System.out.printf("계좌번호:");acID = scan.nextLine();
-		
-		Iterator itr = set.iterator(); //이터레이터 객체 생성 및 준비
-		while(itr.hasNext()) { //추출할 객체가 있는지 확인 후
-			Account acc = (Account) itr.next(); //추출
-			
-			if(acc.getAccountID().equals(acID)) {
-				System.out.println("중복계좌발견됨 덮어쓸까요?(y or n)");
-				char select = scan.next().charAt(0); scan.nextLine();
-					
-					if(select=='y')
-						System.out.println(set.remove(acc));
-					else
-						return;
-		
-			}
-		}
-		
 		System.out.printf("고객이름:");csName = scan.nextLine();
 		System.out.printf("잔고:");acMoney = scan.nextInt();
 		System.out.println("기본이자%(정수형태로입력):");interest = scan.nextInt(); scan.nextLine();
 		
-		if(type==1)
-			set.add(new NormalAccount(acID, csName, acMoney, interest));
-		if(type==2) {
-			System.out.println("신용등급(A,B,C등급):");
-			grade = scan.next().charAt(0);
-			set.add(new HighCreditAccount(acID, csName, acMoney, interest, grade));
+		if(type==1) {
+			
+			NormalAccount noaml = new NormalAccount(acID, csName, acMoney, interest);
+			if(!(set.add(noaml))) {
+				System.out.println("이미 등록된 계좌번호입니다. 덮어쓸까요?(y or n)");
+				char choice = scan.next().charAt(0);
+				
+				if(choice=='Y' || choice=='y') {
+					set.remove(noaml);
+					set.add(noaml);
+				}
+			}
 		}
 		
-		System.out.println("계좌계설이 완료되었습니다.");
+		if(type==2) {
+			
+			System.out.println("신용등급(A,B,C등급):");
+			grade = scan.next().charAt(0);
+			
+			HighCreditAccount High = new HighCreditAccount(acID, csName, acMoney, interest, grade);
+			if(!(set.add(High))) {
+				System.out.println("이미 등록된 계좌번호입니다. 덮어쓸까요?(y or n)");
+				char choice = scan.next().charAt(0);
+				
+				if(choice=='Y' || choice=='y') {
+					set.remove(High);
+					set.add(High);
+				}
+			}
+		}
+		
+		System.out.println("계좌계설이 종료됬습니다.");
 		
 	}
 	
@@ -96,10 +102,14 @@ public class AccountManager {
 			
 			Iterator itr = set.iterator(); //이터레이터 객체 생성 및 준비
 			while(itr.hasNext()) { //추출할 객체가 있는지 확인 후
-				Account acc = (Account) itr.next(); //추출
+				Account account = (Account) itr.next(); //추출
 				
-				if(acc.getAccountID().equals(acID)) 	//계좌번호 확인후 입금
-					acc.setAccMoney(acc.getAccMoney()+money);
+				if(account.getAccountID().equals(acID)) {	//계좌번호 확인후 입금
+					
+					account.setAccMoney(
+							account.getAccMoney()+
+							account.acc(account.getAccMoney())+money);
+				}
 			}
 
 			System.out.println("입금이 완료되었습니다.");

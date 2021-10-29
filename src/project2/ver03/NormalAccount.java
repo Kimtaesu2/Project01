@@ -12,7 +12,7 @@ public class NormalAccount extends Account {
 	
 	@Override
 	public int acc(int num) {
-		System.out.println("nomal accountacc");
+		System.out.println("nomal account");
 		return (int)(interest*num*0.01);
 	}
 	
